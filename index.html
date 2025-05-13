@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vyber operátora</title>
+  <style>
+    :root {
+      --bg-color: #f5f7fa;
+      --card-bg: #ffffff;
+      --primary-color: #2a9d8f;
+      --text-color: #333333;
+      --input-bg: #ffffff;
+      --input-border: #cccccc;
+      --highlight-color: rgba(255, 229, 100, 0.5);
+      --logo-max-height: 120px;
+      --invoice-max-height: 1000px;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: var(--bg-color);
+      color: var(--text-color);
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+      padding: 2rem;
+    }
+    .container {
+      background: var(--card-bg);
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      max-width: 600px;
+      width: 100%;
+      padding: 2rem;
+    }
+    h1 {
+      margin-top: 0;
+      text-align: center;
+      color: var(--primary-color);
+    }
+    p { line-height: 1.6; }
+    label { margin-top: 1rem; font-weight: 600; }
+    input[type="text"], select {
+      width: 100%;
+      padding: 0.6rem 0.8rem;
+      font-size: 1rem;
+      border: 1px solid var(--input-border);
+      border-radius: 4px;
+      background: var(--input-bg);
+      transition: border-color 0.2s;
+    }
+    input[type="text"]:focus, select:focus {
+      outline: none;
+      border-color: var(--primary-color);
+      box-shadow: 0 0 4px rgba(42,157,143,0.4);
+    }
+    .logo-image {
+      display: block;
+      margin: 1.5rem auto;
+      max-width: 100%;
+      max-height: var(--logo-max-height);
+      height: auto;
+      border: 1px solid #eee;
+      border-radius: 4px;
+      background: #fafafa;
+      padding: 0.5rem;
+    }
+    .invoice-img {
+      display: block;
+      margin: 1rem auto;
+      max-width: 100%;
+      max-height: var(--invoice-max-height);
+      height: auto;
+      border: 1px solid #eee;
+      border-radius: 4px;
+      background: #fafafa;
+      padding: 0.5rem;
+    }
+    .invoice-section {
+      margin-top: 3rem;
+      text-align: center;
+    }
+    .highlight {
+      background: var(--highlight-color);
+      padding: 0.2rem 0.4rem;
+      border-radius: 2px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Najväčší mobilní operátori na Slovensku</h1>
+    <p>Vyberte si operátora alebo začnite písať pre návrhy a zobrazí sa vám jeho logo a príklad faktúry s označením kódu zákazníka.</p>
+
+    <label for="search">Vyhľadajte operátora:</label>
+    <input type="text" id="search" list="operators" placeholder="Začnite písať...">
+    <datalist id="operators">
+      <option value="Orange">
+      <option value="Telekom">
+      <option value="O2 Slovakia">
+      <option value="Slovanet">
+      <option value="UPC">
+    </datalist>
+
+    <label for="operator-select">Alebo vyberte operátora zo zoznamu:</label>
+    <select id="operator-select">
+      <option value="">-- Zvoľte --</option>
+      <option value="orange">Orange</option>
+      <option value="telekom">Telekom</option>
+      <option value="o2">O2 Slovakia</option>
+      <option value="slovanet">Slovanet</option>
+      <option value="upc">UPC</option>
+    </select>
+
+    <img id="logo" class="logo-image" src="" alt="Logo operátora" style="display: none;">
+
+    <div class="invoice-section" id="invoice-section" style="display: none;">
+      <h2 style="color: var(--primary-color);">Príklad faktúry</h2>
+      <p id="invoice-desc"></p>
+      <img id="invoice-img" class="invoice-img" src="" alt="Príklad faktúry">
+    </div>
+  </div>
+
+  <script>
+    const operatorData = {
+      orange: {
+        logo: 'images/orange-logo.png',
+        invoice: 'images/orange-invoice.png',
+        desc: 'Na faktúre nájdete <span class="highlight">kód zákazníka</span> v pravej hornej časti vedľa čísla faktúry.'
+      },
+      telekom: {
+        logo: 'images/telekom-logo.png',
+        invoice: 'images/telekom-invoice.png',
+        desc: 'U operátora Telekom je kód zákazníka označený políčkom „Identifikátor zákazníka“ v hornej časti faktúry.'
+      },
+      o2: {
+        logo: 'images/o2-logo.png',
+        invoice: 'images/o2-invoice.png',
+        desc: 'V strede faktúry O2 nájdete kód zákazníka pod textom „Zákazník ID“.'
+      },
+      slovanet: {
+        logo: 'images/slovanet-logo.png',
+        invoice: 'images/slovanet-invoice.png',
+        desc: 'Slovanet vyznačuje kód zákazníka v pravom dolnom rohu faktúry.'
+      },
+      upc: {
+        logo: 'images/upc-logo.png',
+        invoice: 'images/upc-invoice.png',
+        desc: 'Na faktúre UPC je kód zákazníka uvedený vedľa dátumu vystavenia vpravo hore.'
+      }
+    };
+
+    const displayNames = {
+      orange: 'Orange',
+      telekom: 'Telekom',
+      o2: 'O2 Slovakia',
+      slovanet: 'Slovanet',
+      upc: 'UPC'
+    };
+
+    const select = document.getElementById('operator-select');
+    const logo = document.getElementById('logo');
+    const invoiceSection = document.getElementById('invoice-section');
+    const invoiceImg = document.getElementById('invoice-img');
+    const searchInput = document.getElementById('search');
+    const invoiceDesc = document.getElementById('invoice-desc');
+
+    function showOperator(key) {
+      const data = operatorData[key];
+      if (data) {
+        logo.src = data.logo;
+        logo.style.display = 'block';
+        invoiceImg.src = data.invoice;
+        invoiceSection.style.display = 'block';
+        select.value = key;
+        searchInput.value = displayNames[key] || '';
+        invoiceDesc.innerHTML = data.desc;
+      }
+    }
+
+    select.addEventListener('change', () => {
+      const key = select.value;
+      if (key) showOperator(key);
+      else invoiceSection.style.display = logo.style.display = 'none';
+    });
+
+    searchInput.addEventListener('change', () => {
+      const val = searchInput.value.toLowerCase();
+      const mapping = { 'orange': 'orange', 'telekom': 'telekom', 'o2 slovakia': 'o2', 'slovanet': 'slovanet', 'upc': 'upc' };
+      if (mapping[val]) showOperator(mapping[val]);
+    });
+  </script>
+</body>
+</html>
